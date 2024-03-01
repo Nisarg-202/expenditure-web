@@ -1,10 +1,15 @@
-import React, {useState} from 'react';
-import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
-import {v4 as uuidv4} from 'uuid';
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
-import {logoutUser, saveExpense, editExpense, deleteExpense} from '../actions';
-import Loading from './Loading';
+import {
+  logoutUser,
+  saveExpense,
+  editExpense,
+  deleteExpense,
+} from "../actions";
+import Loading from "./Loading";
 
 function NewPage({
   logoutUser,
@@ -12,7 +17,7 @@ function NewPage({
   saveExpense,
   deleteExpense,
   history,
-  location: {state},
+  location: { state },
 }) {
   const [condition, setCondition] = useState(false);
   const [description, setDescription] = useState(state && state.description);
@@ -37,14 +42,14 @@ function NewPage({
   }
 
   function redirectPage() {
-    history.push('/dashboard');
+    history.push("/dashboard");
   }
 
   async function onHandleChange(e) {
     e.preventDefault();
     if (!state) {
       setCondition(true);
-      await saveExpense({description, price, date, note, id: uuidv4()});
+      await saveExpense({ description, price, date, note, id: uuidv4() });
       redirectPage();
     } else {
       setCondition(true);
@@ -80,7 +85,7 @@ function NewPage({
           </button>
         </div>
         <div className="jumbotron">
-          <h3 className="display-4">{state ? 'Edit' : 'Add'} Expenditure</h3>
+          <h3 className="display-4">{state ? "Edit" : "Add"} Expenditure</h3>
         </div>
         <div className="container mt-4">
           <form onSubmit={onHandleChange}>
@@ -118,10 +123,11 @@ function NewPage({
             <div className="form-group">
               <textarea
                 className="form-control"
-                placeholder="Add a note for your expenditure (optional)"
+                placeholder="Add a note for your expenditure"
                 onChange={onNoteChange}
                 value={note}
                 rows={3}
+                required
               ></textarea>
             </div>
             <div className="form-group">
