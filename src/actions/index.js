@@ -1,12 +1,12 @@
-import firebase from 'firebase/app';
+import firebase from "firebase/app";
 
 export const checkUser = function () {
   return async function (dispatch) {
     await firebase.auth().onAuthStateChanged(function (user) {
       if (user) {
-        dispatch({type: 'check_login', payload: user.uid});
+        dispatch({ type: "check_login", payload: user.uid });
       } else {
-        dispatch({type: 'check_login', payload: false});
+        dispatch({ type: "check_login", payload: false });
       }
     });
   };
@@ -21,13 +21,13 @@ export const loginUser = function () {
       .then(function (result) {
         const user = result.user;
         if (user) {
-          dispatch({type: 'check_login', payload: user.uid});
+          dispatch({ type: "check_login", payload: user.uid });
         } else {
-          dispatch({type: 'check_login', payload: false});
+          dispatch({ type: "check_login", payload: false });
         }
       })
       .catch(function (error) {
-        dispatch({type: 'check_login', payload: false});
+        dispatch({ type: "check_login", payload: false });
       });
   };
 };
@@ -38,7 +38,7 @@ export const logoutUser = function () {
       .auth()
       .signOut()
       .then(function () {
-        dispatch({type: 'check_login', payload: false});
+        dispatch({ type: "check_login", payload: false });
       })
       .catch(function (error) {
         console.log(error);
@@ -49,7 +49,7 @@ export const logoutUser = function () {
 export const saveExpense = function (expense) {
   return async function (dispatch, getState) {
     const db = firebase.firestore();
-    const expenseRef = db.collection('expense').doc(getState().Auth);
+    const expenseRef = db.collection("expense").doc(getState().Auth);
     expenseRef.get().then(function (response) {
       if (response.exists) {
         expenseRef.update({
@@ -61,11 +61,11 @@ export const saveExpense = function (expense) {
         });
       }
     });
-    db.collection('expense')
+    db.collection("expense")
       .doc(getState().Auth)
       .onSnapshot(function (doc) {
         if (doc.exists) {
-          dispatch({type: 'user_expense', payload: doc.data()});
+          dispatch({ type: "user_expense", payload: doc.data() });
         }
       });
   };
@@ -74,7 +74,7 @@ export const saveExpense = function (expense) {
 export const editExpense = function (expense) {
   return function (dispatch, getState) {
     const db = firebase.firestore();
-    const sfDocRef = db.collection('expense').doc(getState().Auth);
+    const sfDocRef = db.collection("expense").doc(getState().Auth);
     return db.runTransaction(function (transaction) {
       return transaction.get(sfDocRef).then(function (sfDoc) {
         if (sfDoc.exists) {
@@ -82,12 +82,12 @@ export const editExpense = function (expense) {
             return item.id !== expense.id;
           });
           newExpense.push(expense);
-          transaction.update(sfDocRef, {expenses: newExpense});
-          db.collection('expense')
+          transaction.update(sfDocRef, { expenses: newExpense });
+          db.collection("expense")
             .doc(getState().Auth)
             .onSnapshot(function (doc) {
               if (doc.exists) {
-                dispatch({type: 'user_expense', payload: doc.data()});
+                dispatch({ type: "user_expense", payload: doc.data() });
               }
             });
         }
@@ -99,19 +99,19 @@ export const editExpense = function (expense) {
 export const deleteExpense = function (id) {
   return function (dispatch, getState) {
     const db = firebase.firestore();
-    const sfDocRef = db.collection('expense').doc(getState().Auth);
+    const sfDocRef = db.collection("expense").doc(getState().Auth);
     return db.runTransaction(function (transaction) {
       return transaction.get(sfDocRef).then(function (sfDoc) {
         if (sfDoc.exists) {
           const newExpense = sfDoc.data().expenses.filter(function (item) {
             return item.id !== id;
           });
-          transaction.update(sfDocRef, {expenses: newExpense});
-          db.collection('expense')
+          transaction.update(sfDocRef, { expenses: newExpense });
+          db.collection("expense")
             .doc(getState().Auth)
             .onSnapshot(function (doc) {
               if (doc.exists) {
-                dispatch({type: 'user_expense', payload: doc.data()});
+                dispatch({ type: "user_expense", payload: doc.data() });
               }
             });
         }
@@ -123,10 +123,10 @@ export const deleteExpense = function (id) {
 export const userExpense = function () {
   return function (dispatch, getState) {
     const db = firebase.firestore();
-    const expenseRef = db.collection('expense').doc(getState().Auth);
+    const expenseRef = db.collection("expense").doc(getState().Auth);
     expenseRef.get().then(function (doc) {
       if (doc.exists) {
-        dispatch({type: 'user_expense', payload: doc.data()});
+        dispatch({ type: "user_expense", payload: doc.data() });
       }
     });
   };
